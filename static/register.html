@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Înregistrare - Poseidon Casino</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #00D4FF;
+      --secondary: #0066FF;
+      --dark: #0A0E1B;
+      --darker: #050714;
+      --light: #1A1F2E;
+      --text: #E4E4E7;
+      --accent: #FF006E;
+      --success: #00FF88;
+      --error: #FF4444;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--darker);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      z-index: -1;
+      background: radial-gradient(circle at 20% 80%, var(--secondary) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, var(--primary) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, var(--accent) 0%, transparent 50%);
+      filter: blur(100px);
+      opacity: 0.3;
+      animation: bgRotate 20s linear infinite;
+    }
+
+    @keyframes bgRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Grid pattern overlay */
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+              linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -1;
+      animation: gridMove 10s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    /* Back Button */
+    .back-btn {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+      z-index: 10;
+    }
+
+    .back-btn:hover {
+      color: var(--primary);
+      transform: translateX(-5px);
+    }
+
+    /* Main Container */
+    .register-container {
+      background: rgba(26, 31, 46, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 50px;
+      width: 90%;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Glow effect */
+    .register-container::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+      border-radius: 24px;
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.3s;
+      filter: blur(10px);
+    }
+
+    .register-container:hover::before {
+      opacity: 0.3;
+    }
+
+    /* Header */
+    .form-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .logo::before {
+      content: '⚡';
+      font-size: 2.5rem;
+      -webkit-text-fill-color: var(--primary);
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--text);
+      opacity: 0.7;
+      font-size: 1rem;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px 20px;
+      background: rgba(10, 14, 27, 0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 1rem;
+      transition: all 0.3s;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: rgba(10, 14, 27, 0.8);
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+    }
+
+    input::placeholder {
+      color: var(--text);
+      opacity: 0.3;
+    }
+
+    /* Password strength indicator */
+    .password-strength {
+      height: 4px;
+      margin-top: 8px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.1);
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      width: 0;
+      transition: all 0.3s;
+      border-radius: 2px;
+    }
+
+    .strength-weak { width: 33%; background: var(--error); }
+    .strength-medium { width: 66%; background: #FFA500; }
+    .strength-strong { width: 100%; background: var(--success); }
+
+    /* Checkbox */
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .checkbox-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+    }
+
+    input[type="checkbox"] {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .checkbox-custom {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20px;
+      height: 20px;
+      background: rgba(10, 14, 27, 0.6);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+
+    input[type="checkbox"]:checked ~ .checkbox-custom {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    input[type="checkbox"]:checked ~ .checkbox-custom::after {
+      content: '✓';
+      color: var(--dark);
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input[type="checkbox"]:hover ~ .checkbox-custom {
+      border-color: var(--primary);
+    }
+
+    .checkbox-label {
+      font-size: 0.9rem;
+      color: var(--text);
+      opacity: 0.8;
+    }
+
+    .checkbox-label a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .checkbox-label a:hover {
+      text-decoration: underline;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .submit-btn:hover::before {
+      left: 100%;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Divider */
+    .divider {
+      text-align: center;
+      margin: 30px 0;
+      position: relative;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .divider span {
+      background: rgba(26, 31, 46, 0.8);
+      padding: 0 20px;
+      position: relative;
+      color: var(--text);
+      opacity: 0.6;
+      font-size: 0.9rem;
+    }
+
+    /* Social Login */
+    .social-buttons {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .social-btn {
+      flex: 1;
+      padding: 12px;
+      background: rgba(10, 14, 27, 0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .social-btn:hover {
+      border-color: var(--primary);
+      background: rgba(0, 212, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Login Link */
+    .login-link {
+      text-align: center;
+      margin-top: 30px;
+      color: var(--text);
+      opacity: 0.8;
+    }
+
+    .login-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Error/Success Messages */
+    .message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      display: none;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.error {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid rgba(255, 68, 68, 0.3);
+      color: var(--error);
+    }
+
+    .message.success {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      color: var(--success);
+    }
+
+    /* Loading State */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .register-container {
+        padding: 30px;
+      }
+
+      .logo {
+        font-size: 2.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="bg-animation"></div>
+<div class="grid-overlay"></div>
+
+<a href="/" class="back-btn">
+  ← Înapoi la site
+</a>
+
+<div class="register-container">
+  <div class="form-header">
+    <div class="logo">POSEIDON</div>
+    <h1>Creează Cont</h1>
+    <p class="subtitle">Alătură-te comunității de peste 2 milioane de jucători</p>
+  </div>
+
+  <div class="message error" id="errorMessage"></div>
+  <div class="message success" id="successMessage"></div>
+
+  <form id="registerForm">
+    <div class="form-group">
+      <label for="username">Nume Utilizator</label>
+      <div class="input-wrapper">
+        <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Alege un nume unic"
+                required
+                autocomplete="username"
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <div class="input-wrapper">
+        <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="email@exemplu.com"
+                required
+                autocomplete="email"
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Parolă</label>
+      <div class="input-wrapper">
+        <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Minim 8 caractere"
+                required
+                autocomplete="new-password"
+        >
+      </div>
+      <div class="password-strength" id="passwordStrength">
+        <div class="password-strength-bar" id="strengthBar"></div>
+      </div>
+    </div>
+
+<!--    <div class="checkbox-group">-->
+<!--      <div class="checkbox-wrapper">-->
+<!--        <input type="checkbox" id="terms" required>-->
+<!--        <div class="checkbox-custom"></div>-->
+<!--      </div>-->
+<!--      <label for="terms" class="checkbox-label" style="cursor: pointer;">-->
+<!--        Accept <a href="#">Termenii și Condițiile</a> și <a href="#">Politica de Confidențialitate</a>-->
+<!--      </label>-->
+<!--    </div>-->
+
+    <button type="submit" class="submit-btn" id="submitBtn">
+      Creează Cont
+    </button>
+  </form>
+
+  <div class="divider">
+    <span>SAU</span>
+  </div>
+
+  <div class="social-buttons">
+    <button class="social-btn" title="Google">🔍</button>
+    <button class="social-btn" title="Discord">💬</button>
+    <button class="social-btn" title="Steam">🎮</button>
+  </div>
+
+  <div class="login-link">
+    Ai deja cont? <a href="/login">Autentifică-te</a>
+  </div>
+</div>
+
+<script>
+  // Password strength checker
+  const passwordInput = document.getElementById('password');
+  const strengthBar = document.getElementById('strengthBar');
+
+  passwordInput.addEventListener('input', (e) => {
+    const password = e.target.value;
+    let strength = 0;
+
+    if (password.length >= 8) strength++;
+    if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+    if (password.match(/[0-9]/)) strength++;
+    if (password.match(/[^a-zA-Z0-9]/)) strength++;
+
+    strengthBar.className = 'password-strength-bar';
+
+    if (password.length > 0) {
+      if (strength <= 1) {
+        strengthBar.classList.add('strength-weak');
+      } else if (strength <= 3) {
+        strengthBar.classList.add('strength-medium');
+      } else {
+        strengthBar.classList.add('strength-strong');
+      }
+    }
+  });
+
+  // Form submission
+  const form = document.getElementById('registerForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const errorMessage = document.getElementById('errorMessage');
+  const successMessage = document.getElementById('successMessage');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Reset messages
+    errorMessage.style.display = 'none';
+    successMessage.style.display = 'none';
+
+    // Disable button and show loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="loading"></span>';
+
+    const formData = {
+      username: document.getElementById('username').value,
+      password: document.getElementById('password').value,
+      email: document.getElementById('email').value
+    };
+
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        successMessage.textContent = 'Cont creat cu succes! Redirecționare...';
+        successMessage.style.display = 'block';
+
+        // Store token
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.username);
+
+        // Redirect to dashboard
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1500);
+      } else {
+        errorMessage.textContent = data.error || 'A apărut o eroare. Te rugăm să încerci din nou.';
+        errorMessage.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Creează Cont';
+      }
+    } catch (error) {
+      errorMessage.textContent = 'Eroare de conexiune. Te rugăm să verifici conexiunea la internet.';
+      errorMessage.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Creează Cont';
+    }
+  });
+
+  // Checkbox click handler - removed as it's not needed anymore
+
+  // Social login placeholders
+  document.querySelectorAll('.social-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      alert('Autentificare socială va fi disponibilă în curând!');
+    });
+  });
+
+  // Input animations
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('focus', () => {
+      input.parentElement.style.transform = 'scale(1.02)';
+    });
+
+    input.addEventListener('blur', () => {
+      input.parentElement.style.transform = 'scale(1)';
+    });
+  });
+</script>
+</body>
+</html>

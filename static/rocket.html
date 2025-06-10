@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rocket Crash - Poseidon Casino</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #00D4FF;
+      --secondary: #0066FF;
+      --dark: #0A0E1B;
+      --darker: #050714;
+      --light: #1A1F2E;
+      --text: #E4E4E7;
+      --accent: #FF006E;
+      --success: #00FF88;
+      --error: #FF4444;
+      --warning: #FFA500;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--darker);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Space Background */
+    .space-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at bottom, #1a237e 0%, #0a0e27 100%);
+      z-index: -2;
+    }
+
+    .stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* Header */
+    header {
+      background: rgba(26, 31, 46, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 20px 0;
+      position: relative;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+      color: var(--primary);
+      transform: translateX(-5px);
+    }
+
+    .balance-display {
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* Game Container */
+    .game-container {
+      max-width: 1200px;
+      margin: 50px auto;
+      padding: 0 20px;
+    }
+
+    .game-title {
+      text-align: center;
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    /* Game Board */
+    .game-board {
+      background: rgba(26, 31, 46, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      margin-bottom: 30px;
+    }
+
+    /* Rocket Display */
+    .rocket-display {
+      height: 400px;
+      background: linear-gradient(to bottom, #0a0e27, #1a237e);
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 30px;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+
+    .rocket {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 4rem;
+      transition: all 0.1s linear;
+    }
+
+    .rocket.flying {
+      animation: rocketFly linear;
+    }
+
+    @keyframes rocketFly {
+      to {
+        bottom: 90%;
+      }
+    }
+
+    .rocket.exploded {
+      animation: explode 0.5s ease-out;
+    }
+
+    @keyframes explode {
+      0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-50%) scale(2);
+        opacity: 0;
+      }
+    }
+
+    .multiplier-display {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 5rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    }
+
+    .crash-point {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 68, 68, 0.2);
+      border: 1px solid var(--error);
+      padding: 10px 20px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    /* Betting Controls */
+    .betting-controls {
+      background: rgba(10, 14, 27, 0.6);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    .bet-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .bet-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bet-label {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+    }
+
+    .bet-input {
+      padding: 15px;
+      background: rgba(26, 31, 46, 0.8);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .bet-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+    }
+
+    .quick-bet-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .quick-bet-btn {
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .quick-bet-btn:hover {
+      background: rgba(0, 212, 255, 0.2);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .action-btn {
+      padding: 15px 50px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .start-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+    }
+
+    .cashout-btn {
+      background: linear-gradient(135deg, var(--success), #00CC70);
+      color: white;
+      display: none;
+    }
+
+    .cashout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 255, 136, 0.5);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Game Info */
+    .game-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .info-card {
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .info-label {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-bottom: 5px;
+    }
+
+    .info-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* History */
+    .history-section {
+      background: rgba(26, 31, 46, 0.6);
+      border-radius: 16px;
+      padding: 30px;
+    }
+
+    .history-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+
+    .history-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      padding: 15px;
+      background: rgba(10, 14, 27, 0.5);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+      align-items: center;
+    }
+
+    .history-item:hover {
+      background: rgba(10, 14, 27, 0.8);
+    }
+
+    .history-multiplier {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .history-result {
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .history-result.win {
+      color: var(--success);
+    }
+
+    .history-result.lose {
+      color: var(--error);
+    }
+
+    .history-payout {
+      text-align: right;
+      font-weight: 600;
+    }
+
+    /* Live Bets */
+    .live-bets {
+      position: fixed;
+      right: 20px;
+      top: 100px;
+      width: 300px;
+      background: rgba(26, 31, 46, 0.9);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .live-bets-title {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+
+    .live-bet-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: rgba(10, 14, 27, 0.5);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    .live-bet-user {
+      color: var(--text);
+      opacity: 0.8;
+    }
+
+    .live-bet-amount {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .pulse {
+      animation: pulse 1s infinite;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .live-bets {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .game-title {
+        font-size: 2rem;
+      }
+
+      .rocket-display {
+        height: 300px;
+      }
+
+      .multiplier-display {
+        font-size: 3rem;
+      }
+
+      .bet-section {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .action-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="space-bg"></div>
+<div class="stars" id="stars"></div>
+
+<header>
+  <div class="header-container">
+    <a href="/dashboard" class="back-btn">
+      ← Înapoi la Dashboard
+    </a>
+    <div class="balance-display">
+      Balanță: €<span id="balance">0.00</span>
+    </div>
+  </div>
+</header>
+
+<div class="game-container">
+  <h1 class="game-title">
+    <span>🚀</span>
+    Rocket Crash
+    <span>💥</span>
+  </h1>
+
+  <div class="game-board">
+    <div class="rocket-display" id="rocketDisplay">
+      <div class="rocket" id="rocket">🚀</div>
+      <div class="multiplier-display" id="multiplierDisplay">1.00x</div>
+      <div class="crash-point" id="crashPoint"></div>
+    </div>
+
+    <div class="game-info">
+      <div class="info-card">
+        <div class="info-label">Multiplicator Curent</div>
+        <div class="info-value" id="currentMultiplier">1.00x</div>
+      </div>
+      <div class="info-card">
+        <div class="info-label">Pariu Curent</div>
+        <div class="info-value" id="currentBet">€0.00</div>
+      </div>
+      <div class="info-card">
+        <div class="info-label">Câștig Potențial</div>
+        <div class="info-value" id="potentialWin">€0.00</div>
+      </div>
+    </div>
+
+    <div class="betting-controls">
+      <div class="bet-section">
+        <div class="bet-group">
+          <label class="bet-label">Suma Pariată:</label>
+          <input type="number" class="bet-input" id="betAmount" value="10" min="1" step="1">
+          <div class="quick-bet-buttons">
+            <button class="quick-bet-btn" onclick="setBet(10)">€10</button>
+            <button class="quick-bet-btn" onclick="setBet(25)">€25</button>
+            <button class="quick-bet-btn" onclick="setBet(50)">€50</button>
+            <button class="quick-bet-btn" onclick="setBet(100)">€100</button>
+          </div>
+        </div>
+        <div class="bet-group">
+          <label class="bet-label">Auto Cash Out (opțional):</label>
+          <input type="number" class="bet-input" id="autoCashout" placeholder="ex: 2.00" step="0.01" min="1.01">
+          <div class="quick-bet-buttons">
+            <button class="quick-bet-btn" onclick="setAutoCashout(1.5)">1.5x</button>
+            <button class="quick-bet-btn" onclick="setAutoCashout(2)">2x</button>
+            <button class="quick-bet-btn" onclick="setAutoCashout(5)">5x</button>
+            <button class="quick-bet-btn" onclick="setAutoCashout(10)">10x</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="action-btn start-btn" id="startBtn" onclick="startGame()">
+          🚀 Pornește Racheta
+        </button>
+        <button class="action-btn cashout-btn" id="cashoutBtn" onclick="cashOut()">
+          💰 Retrage Câștigul
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="history-section">
+    <h3 class="history-title">Istoric Recent</h3>
+    <div class="history-list" id="historyList">
+      <!-- History items will be added here -->
+    </div>
+  </div>
+</div>
+
+<div class="live-bets">
+  <h4 class="live-bets-title">Pariuri Live</h4>
+  <div id="liveBetsList">
+    <!-- Live bets will be simulated here -->
+  </div>
+</div>
+
+<script>
+  // Game state
+  let balance = 0;
+  let isPlaying = false;
+  let currentMultiplier = 1.00;
+  let betAmount = 0;
+  let crashPoint = 0;
+  let gameInterval = null;
+  let rocketAnimation = null;
+  let gameHistory = [];
+  const token = localStorage.getItem('token');
+  const username = localStorage.getItem('username');
+
+  // Check authentication
+  if (!token) {
+    window.location.href = '/login';
+  }
+
+  // Create stars
+  function createStars() {
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      starsContainer.appendChild(star);
+    }
+  }
+
+  // Load balance
+  async function loadBalance() {
+    try {
+      const response = await fetch('/api/balance', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        balance = data.balance;
+        document.getElementById('balance').textContent = balance.toFixed(2);
+      }
+    } catch (error) {
+      console.error('Error loading balance:', error);
+    }
+  }
+
+  // Set bet amount
+  function setBet(amount) {
+    document.getElementById('betAmount').value = Math.min(Math.max(1, Math.floor(amount)), balance);
+  }
+
+  // Set auto cashout
+  function setAutoCashout(multiplier) {
+    document.getElementById('autoCashout').value = multiplier.toFixed(2);
+  }
+
+  // Start game
+  async function startGame() {
+    if (isPlaying) return;
+
+    betAmount = parseFloat(document.getElementById('betAmount').value);
+
+    if (!betAmount || betAmount <= 0) {
+      alert('Te rugăm să introduci o sumă validă!');
+      return;
+    }
+
+    if (betAmount > balance) {
+      alert('Nu ai suficiente fonduri!');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/games/rocket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          action: 'start',
+          bet: betAmount,
+          username: username
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        crashPoint = data.crash_point;
+
+        // Update UI
+        isPlaying = true;
+        currentMultiplier = 1.00;
+        document.getElementById('startBtn').style.display = 'none';
+        document.getElementById('cashoutBtn').style.display = 'block';
+        document.getElementById('currentBet').textContent = `€${betAmount.toFixed(2)}`;
+        document.getElementById('betAmount').disabled = true;
+        document.getElementById('autoCashout').disabled = true;
+
+        // Update balance immediately
+        balance -= betAmount;
+        document.getElementById('balance').textContent = balance.toFixed(2);
+
+        // Start rocket animation
+        const rocket = document.getElementById('rocket');
+        rocket.classList.add('flying');
+        const animationDuration = (crashPoint - 1) * 10; // seconds
+        rocket.style.animationDuration = animationDuration + 's';
+
+        // Start multiplier counter
+        startMultiplierCounter();
+
+        // Simulate live bets
+        simulateLiveBets();
+      }
+    } catch (error) {
+      alert('Eroare de conexiune!');
+    }
+  }
+
+  // Start multiplier counter
+  function startMultiplierCounter() {
+    const startTime = Date.now();
+    const autoCashout = parseFloat(document.getElementById('autoCashout').value);
+
+    gameInterval = setInterval(() => {
+      const elapsed = (Date.now() - startTime) / 1000;
+      currentMultiplier = 1 + (elapsed * 0.1);
+
+      // Update display
+      document.getElementById('multiplierDisplay').textContent = currentMultiplier.toFixed(2) + 'x';
+      document.getElementById('currentMultiplier').textContent = currentMultiplier.toFixed(2) + 'x';
+      document.getElementById('potentialWin').textContent = `€${(betAmount * currentMultiplier).toFixed(2)}`;
+
+      // Check auto cashout
+      if (autoCashout && currentMultiplier >= autoCashout) {
+        cashOut();
+        return;
+      }
+
+      // Check if crashed
+      if (currentMultiplier >= crashPoint) {
+        crash();
+      }
+    }, 100);
+  }
+
+  // Cash out
+  async function cashOut() {
+    if (!isPlaying) return;
+
+    clearInterval(gameInterval);
+    isPlaying = false;
+
+    try {
+      const response = await fetch('/api/games/rocket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          action: 'cashout',
+          multiplier: currentMultiplier,
+          bet: betAmount,
+          crash_point: crashPoint,
+          username: username
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Update balance
+        balance = data.balance;
+        document.getElementById('balance').textContent = balance.toFixed(2);
+
+        // Show result
+        const rocket = document.getElementById('rocket');
+        rocket.classList.remove('flying');
+        rocket.style.animation = 'none';
+
+        if (data.won) {
+          document.getElementById('multiplierDisplay').innerHTML = `
+                            <div style="color: var(--success);">
+                                🎉 Câștig!<br>
+                                +€${data.payout.toFixed(2)}
+                            </div>
+                        `;
+        }
+
+        // Add to history
+        addToHistory(currentMultiplier, true, data.payout - betAmount);
+
+        // Reset game
+        setTimeout(resetGame, 3000);
+      }
+    } catch (error) {
+      alert('Eroare la retragerea câștigului!');
+      resetGame();
+    }
+  }
+
+  // Crash
+  function crash() {
+    clearInterval(gameInterval);
+    isPlaying = false;
+
+    const rocket = document.getElementById('rocket');
+    rocket.classList.remove('flying');
+    rocket.classList.add('exploded');
+
+    document.getElementById('multiplierDisplay').innerHTML = `
+                <div style="color: var(--error);">
+                    💥 Explodat la ${crashPoint.toFixed(2)}x<br>
+                    -€${betAmount.toFixed(2)}
+                </div>
+            `;
+
+    document.getElementById('crashPoint').textContent = `Crash: ${crashPoint.toFixed(2)}x`;
+    document.getElementById('crashPoint').style.display = 'block';
+
+    // Add to history
+    addToHistory(crashPoint, false, -betAmount);
+
+    // Reset game
+    setTimeout(resetGame, 3000);
+  }
+
+  // Reset game
+  function resetGame() {
+    const rocket = document.getElementById('rocket');
+    rocket.classList.remove('flying', 'exploded');
+    rocket.style.animation = '';
+    rocket.style.bottom = '20px';
+
+    document.getElementById('startBtn').style.display = 'block';
+    document.getElementById('cashoutBtn').style.display = 'none';
+    document.getElementById('multiplierDisplay').textContent = '1.00x';
+    document.getElementById('currentMultiplier').textContent = '1.00x';
+    document.getElementById('currentBet').textContent = '€0.00';
+    document.getElementById('potentialWin').textContent = '€0.00';
+    document.getElementById('crashPoint').style.display = 'none';
+    document.getElementById('betAmount').disabled = false;
+    document.getElementById('autoCashout').disabled = false;
+
+    currentMultiplier = 1.00;
+    betAmount = 0;
+    crashPoint = 0;
+  }
+
+  // Add to history
+  function addToHistory(multiplier, won, payout) {
+    const historyItem = {
+      multiplier,
+      won,
+      payout,
+      time: new Date().toLocaleTimeString()
+    };
+
+    gameHistory.unshift(historyItem);
+    if (gameHistory.length > 10) {
+      gameHistory.pop();
+    }
+
+    updateHistoryDisplay();
+  }
+
+  // Update history display
+  function updateHistoryDisplay() {
+    const historyList = document.getElementById('historyList');
+    historyList.innerHTML = gameHistory.map(item => `
+                <div class="history-item">
+                    <div class="history-multiplier">${item.multiplier.toFixed(2)}x</div>
+                    <div class="history-result ${item.won ? 'win' : 'lose'}">
+                        ${item.won ? 'Câștig' : 'Pierdut'}
+                    </div>
+                    <div class="history-payout" style="color: ${item.won ? 'var(--success)' : 'var(--error)'}">
+                        ${item.won ? '+' : ''}€${Math.abs(item.payout).toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+  }
+
+  // Simulate live bets
+  function simulateLiveBets() {
+    const names = ['Alex', 'Maria', 'Ion', 'Elena', 'Andrei', 'Ana', 'Mihai', 'Ioana'];
+    const liveBetsList = document.getElementById('liveBetsList');
+
+    const interval = setInterval(() => {
+      if (!isPlaying) {
+        clearInterval(interval);
+        return;
+      }
+
+      if (Math.random() > 0.7) {
+        const name = names[Math.floor(Math.random() * names.length)];
+        const amount = Math.floor(Math.random() * 500) + 10;
+        const multiplier = (1 + Math.random() * 5).toFixed(2);
+
+        const liveBet = document.createElement('div');
+        liveBet.className = 'live-bet-item';
+        liveBet.innerHTML = `
+                        <span class="live-bet-user">${name}</span>
+                        <span class="live-bet-amount">€${amount} @ ${multiplier}x</span>
+                    `;
+
+        liveBetsList.insertBefore(liveBet, liveBetsList.firstChild);
+
+        if (liveBetsList.children.length > 10) {
+          liveBetsList.removeChild(liveBetsList.lastChild);
+        }
+
+        setTimeout(() => {
+          liveBet.style.opacity = '0.5';
+        }, 3000);
+      }
+    }, 1000);
+  }
+
+  // Initialize
+  createStars();
+  loadBalance();
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (!isPlaying) {
+        startGame();
+      } else {
+        cashOut();
+      }
+    }
+  });
+</script>
+</body>
+</html>

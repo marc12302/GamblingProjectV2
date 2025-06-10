@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zarurile lui Poseidon - Poseidon Casino</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00D4FF;
+            --secondary: #0066FF;
+            --dark: #0A0E1B;
+            --darker: #050714;
+            --light: #1A1F2E;
+            --text: #E4E4E7;
+            --accent: #FF006E;
+            --success: #00FF88;
+            --error: #FF4444;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated ocean background */
+        .ocean-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #0a0e27 0%, #0d47a1 100%);
+            z-index: -2;
+        }
+
+        .waves {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            z-index: -1;
+        }
+
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path fill="%2300D4FF" fill-opacity="0.1" d="M0,60 C200,120 400,0 600,60 C800,120 1000,0 1200,60 L1200,120 L0,120 Z"/></svg>');
+            background-size: 1200px 100%;
+            animation: wave 10s linear infinite;
+        }
+
+        .wave:nth-child(2) {
+            bottom: 10px;
+            opacity: 0.5;
+            animation: wave 15s linear infinite reverse;
+        }
+
+        .wave:nth-child(3) {
+            bottom: 20px;
+            opacity: 0.3;
+            animation: wave 20s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Header */
+        header {
+            background: rgba(26, 31, 46, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 20px 0;
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+            transform: translateX(-5px);
+        }
+
+        .balance-display {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Game Container */
+        .game-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* Game Board */
+        .game-board {
+            background: rgba(26, 31, 46, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+
+        /* Dice Area */
+        .dice-area {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            min-height: 200px;
+            align-items: center;
+        }
+
+        .dice {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.5s;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .dice.rolling {
+            animation: rollDice 0.5s ease-in-out;
+        }
+
+        @keyframes rollDice {
+            0% { transform: rotateX(0) rotateY(0); }
+            25% { transform: rotateX(360deg) rotateY(180deg); }
+            50% { transform: rotateX(180deg) rotateY(360deg); }
+            75% { transform: rotateX(360deg) rotateY(180deg); }
+            100% { transform: rotateX(0) rotateY(0); }
+        }
+
+        /* Target Selection */
+        .target-selection {
+            margin-bottom: 30px;
+        }
+
+        .target-label {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .target-btn {
+            padding: 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .target-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .target-btn.selected {
+            background: var(--primary);
+            color: var(--dark);
+            border-color: var(--primary);
+        }
+
+        .target-btn .odds {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Betting Controls */
+        .betting-controls {
+            background: rgba(10, 14, 27, 0.6);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .bet-amount-section {
+            margin-bottom: 20px;
+        }
+
+        .bet-label {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .bet-input-wrapper {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .bet-input {
+            flex: 1;
+            padding: 15px;
+            background: rgba(26, 31, 46, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .bet-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .quick-bet-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quick-bet-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .quick-bet-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .roll-btn {
+            padding: 15px 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .roll-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .roll-btn:hover::before {
+            left: 100%;
+        }
+
+        .roll-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .roll-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Results */
+        .result-display {
+            text-align: center;
+            margin-top: 30px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-message {
+            font-size: 2rem;
+            font-weight: 700;
+            animation: fadeIn 0.5s;
+        }
+
+        .result-message.win {
+            color: var(--success);
+        }
+
+        .result-message.lose {
+            color: var(--error);
+        }
+
+        .payout-amount {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            color: var(--primary);
+        }
+
+        /* History */
+        .history-section {
+            background: rgba(26, 31, 46, 0.6);
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .history-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(10, 14, 27, 0.5);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: rgba(10, 14, 27, 0.8);
+        }
+
+        .history-dice {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .mini-dice {
+            width: 30px;
+            height: 30px;
+            background: var(--light);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .history-result {
+            font-weight: 600;
+        }
+
+        .history-result.win {
+            color: var(--success);
+        }
+
+        .history-result.lose {
+            color: var(--error);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2rem;
+            }
+
+            .dice {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+
+            .target-grid {
+                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .roll-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="ocean-bg"></div>
+<div class="waves">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+</div>
+
+<header>
+    <div class="header-container">
+        <a href="/dashboard" class="back-btn">
+            ← Înapoi la Dashboard
+        </a>
+        <div class="balance-display">
+            Balanță: €<span id="balance">0.00</span>
+        </div>
+    </div>
+</header>
+
+<div class="game-container">
+    <h1 class="game-title">
+        <span>🌊</span>
+        Zarurile lui Poseidon
+        <span>🎲</span>
+    </h1>
+
+    <div class="game-board">
+        <div class="dice-area">
+            <div class="dice" id="dice1">?</div>
+            <div class="dice" id="dice2">?</div>
+        </div>
+
+        <div class="target-selection">
+            <div class="target-label">Alege suma țintă:</div>
+            <div class="target-grid">
+                <button class="target-btn" onclick="selectTarget(2)">
+                    2
+                    <span class="odds">35:1</span>
+                </button>
+                <button class="target-btn" onclick="selectTarget(3)">
+                    3
+                    <span class="odds">17:1</span>
+                </button>
+                <button class="target-btn" onclick="selectTarget(4)">
+                    4
+                    <span class="odds">11:1</span>
+                </button>
+                <button class="target-btn" onclick="selectTarget(5)">
+                    5
+                    <span class="odds">8:1</span>
+                </button>
+                <button class="target-btn" onclick="selectTarget(6)">
+                    6
+                    <span class="odds">6:1</span>
+                </button>
+                <button class="target-btn" onclick="selectTarget(7)">
+                    7
+                    <span class="odds">5:1</span>
+                </button>
+                <button class="target-btn" onclick="selectTarget(8)">
+                    8
+                    <span class="odds">6:1</span>
+                </button>
+                <button class="target-btn" onclick="selectTarget(9)">
+                    9
+                    <span class="odds">8:1</span>
+                </button>
+                <button class="target-btn" onclick="selectTarget(10)">
+                    10
+                    <span class="odds">11:1</span>
+                </button>
+                <button class="target-btn" onclick="selectTarget(11)">
+                    11
+                    <span class="odds">17:1</span>
+                </button>
+                <button class="target-btn" onclick="selectTarget(12)">
+                    12
+                    <span class="odds">35:1</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="betting-controls">
+            <div class="bet-amount-section">
+                <label class="bet-label">Suma pariată:</label>
+                <div class="bet-input-wrapper">
+                    <input type="number" class="bet-input" id="betAmount" value="10" min="1" step="1">
+                </div>
+                <div class="quick-bet-buttons">
+                    <button class="quick-bet-btn" onclick="setBet(10)">€10</button>
+                    <button class="quick-bet-btn" onclick="setBet(25)">€25</button>
+                    <button class="quick-bet-btn" onclick="setBet(50)">€50</button>
+                    <button class="quick-bet-btn" onclick="setBet(100)">€100</button>
+                    <button class="quick-bet-btn" onclick="setBet(balance/2)">1/2</button>
+                    <button class="quick-bet-btn" onclick="setBet(balance)">MAX</button>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="roll-btn" id="rollBtn" onclick="rollDice()">
+                    🎲 Aruncă Zarurile
+                </button>
+            </div>
+        </div>
+
+        <div class="result-display" id="resultDisplay"></div>
+    </div>
+
+    <div class="history-section">
+        <h3 class="history-title">Istoric Recent</h3>
+        <div class="history-list" id="historyList">
+            <!-- History items will be added here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // Game state
+    let balance = 0;
+    let selectedTarget = null;
+    let isRolling = false;
+    let gameHistory = [];
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+
+    // Check authentication
+    if (!token) {
+        window.location.href = '/login';
+    }
+
+    // Load balance
+    async function loadBalance() {
+        try {
+            const response = await fetch('/api/balance', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                balance = data.balance;
+                document.getElementById('balance').textContent = balance.toFixed(2);
+            }
+        } catch (error) {
+            console.error('Error loading balance:', error);
+        }
+    }
+
+    // Select target sum
+    function selectTarget(target) {
+        selectedTarget = target;
+        document.querySelectorAll('.target-btn').forEach(btn => {
+            btn.classList.remove('selected');
+            if (btn.textContent.includes(target)) {
+                btn.classList.add('selected');
+            }
+        });
+    }
+
+    // Set bet amount
+    function setBet(amount) {
+        document.getElementById('betAmount').value = Math.min(Math.max(1, Math.floor(amount)), balance);
+    }
+
+    // Roll dice
+    async function rollDice() {
+        if (isRolling) return;
+
+        const betAmount = parseFloat(document.getElementById('betAmount').value);
+
+        // Validation
+        if (!selectedTarget) {
+            alert('Te rugăm să selectezi o sumă țintă!');
+            return;
+        }
+
+        if (!betAmount || betAmount <= 0) {
+            alert('Te rugăm să introduci o sumă validă!');
+            return;
+        }
+
+        if (betAmount > balance) {
+            alert('Nu ai suficiente fonduri!');
+            return;
+        }
+
+        isRolling = true;
+        document.getElementById('rollBtn').disabled = true;
+        document.getElementById('resultDisplay').innerHTML = '';
+
+        // Animate dice
+        const dice1 = document.getElementById('dice1');
+        const dice2 = document.getElementById('dice2');
+        dice1.classList.add('rolling');
+        dice2.classList.add('rolling');
+
+        // Simulate rolling
+        const rollInterval = setInterval(() => {
+            dice1.textContent = Math.floor(Math.random() * 6) + 1;
+            dice2.textContent = Math.floor(Math.random() * 6) + 1;
+        }, 100);
+
+        try {
+            const response = await fetch('/api/games/dice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    bet: betAmount,
+                    target: selectedTarget,
+                    username: username
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                setTimeout(() => {
+                    clearInterval(rollInterval);
+                    dice1.classList.remove('rolling');
+                    dice2.classList.remove('rolling');
+
+                    // Show final result
+                    dice1.textContent = data.dice1;
+                    dice2.textContent = data.dice2;
+
+                    // Update balance
+                    balance = data.balance;
+                    document.getElementById('balance').textContent = balance.toFixed(2);
+
+                    // Show result message
+                    const resultDisplay = document.getElementById('resultDisplay');
+                    if (data.won) {
+                        resultDisplay.innerHTML = `
+                                <div>
+                                    <div class="result-message win">🎉 Ai câștigat!</div>
+                                    <div class="payout-amount">+€${Math.abs(data.payout).toFixed(2)}</div>
+                                </div>
+                            `;
+                    } else {
+                        resultDisplay.innerHTML = `
+                                <div>
+                                    <div class="result-message lose">😢 Ai pierdut!</div>
+                                    <div class="payout-amount">-€${betAmount.toFixed(2)}</div>
+                                </div>
+                            `;
+                    }
+
+                    // Add to history
+                    addToHistory(data.dice1, data.dice2, data.sum, data.won, data.payout);
+
+                    isRolling = false;
+                    document.getElementById('rollBtn').disabled = false;
+                }, 1500);
+            } else {
+                clearInterval(rollInterval);
+                dice1.classList.remove('rolling');
+                dice2.classList.remove('rolling');
+                alert('Eroare la procesarea pariului!');
+                isRolling = false;
+                document.getElementById('rollBtn').disabled = false;
+            }
+        } catch (error) {
+            clearInterval(rollInterval);
+            dice1.classList.remove('rolling');
+            dice2.classList.remove('rolling');
+            alert('Eroare de conexiune!');
+            isRolling = false;
+            document.getElementById('rollBtn').disabled = false;
+        }
+    }
+
+    // Add to history
+    function addToHistory(dice1, dice2, sum, won, payout) {
+        const historyItem = {
+            dice1,
+            dice2,
+            sum,
+            won,
+            payout,
+            time: new Date().toLocaleTimeString()
+        };
+
+        gameHistory.unshift(historyItem);
+        if (gameHistory.length > 10) {
+            gameHistory.pop();
+        }
+
+        updateHistoryDisplay();
+    }
+
+    // Update history display
+    function updateHistoryDisplay() {
+        const historyList = document.getElementById('historyList');
+        historyList.innerHTML = gameHistory.map(item => `
+                <div class="history-item">
+                    <div class="history-dice">
+                        <div class="mini-dice">${item.dice1}</div>
+                        <div class="mini-dice">${item.dice2}</div>
+                        <span>= ${item.sum}</span>
+                    </div>
+                    <div class="history-result ${item.won ? 'win' : 'lose'}">
+                        ${item.won ? '+' : ''}€${item.payout.toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    // Initialize
+    loadBalance();
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && !isRolling) {
+            e.preventDefault();
+            rollDice();
+        }
+    });
+</script>
+</body>
+</html>

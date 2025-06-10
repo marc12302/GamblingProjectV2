@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poseidon Casino - Next Generation Gaming</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #00D4FF;
+      --secondary: #0066FF;
+      --dark: #0A0E1B;
+      --darker: #050714;
+      --light: #1A1F2E;
+      --text: #E4E4E7;
+      --accent: #FF006E;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--darker);
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      background: radial-gradient(circle at 20% 80%, var(--secondary) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, var(--primary) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, var(--accent) 0%, transparent 50%);
+      filter: blur(100px);
+      opacity: 0.3;
+      animation: bgMove 20s ease-in-out infinite;
+    }
+
+    @keyframes bgMove {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.2); }
+    }
+
+    /* Noise Texture */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+              repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,.03) 2px, rgba(255,255,255,.03) 4px);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 20px 50px;
+      background: rgba(10, 14, 27, 0.8);
+      backdrop-filter: blur(20px);
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8em;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo::before {
+      content: '⚡';
+      font-size: 1.2em;
+      -webkit-text-fill-color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+      z-index: -1;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(0, 212, 255, 0.5);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary);
+      color: var(--dark);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 100px 50px 50px;
+    }
+
+    .hero-content {
+      text-align: center;
+      max-width: 900px;
+      z-index: 2;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 5s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { filter: hue-rotate(0deg); }
+      50% { filter: hue-rotate(30deg); }
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      color: var(--text);
+      opacity: 0.8;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 80px;
+      padding: 40px;
+      background: rgba(26, 31, 46, 0.5);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      color: var(--text);
+      opacity: 0.7;
+      margin-top: 5px;
+    }
+
+    /* Games Section */
+    .games-section {
+      padding: 100px 50px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .section-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .section-subtitle {
+      font-size: 1.2rem;
+      color: var(--text);
+      opacity: 0.7;
+    }
+
+    /* Filter Pills */
+    .filter-container {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+    }
+
+    .filter-pill {
+      padding: 10px 24px;
+      background: rgba(26, 31, 46, 0.8);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .filter-pill:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .filter-pill.active {
+      background: var(--primary);
+      color: var(--dark);
+      border-color: var(--primary);
+    }
+
+    /* Games Grid */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .game-card {
+      background: rgba(26, 31, 46, 0.6);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s;
+      border: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, transparent, rgba(0, 212, 255, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .game-card:hover::before {
+      opacity: 1;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--primary);
+      box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
+    }
+
+    .game-image {
+      width: 100%;
+      height: 250px;
+      background: linear-gradient(135deg, var(--light), var(--dark));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4rem;
+      opacity: 0.8;
+    }
+
+    .game-content {
+      padding: 30px;
+    }
+
+    .game-tag {
+      display: inline-block;
+      padding: 5px 15px;
+      background: rgba(0, 212, 255, 0.2);
+      color: var(--primary);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-bottom: 15px;
+    }
+
+    .game-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .game-description {
+      color: var(--text);
+      opacity: 0.7;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .game-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .play-btn {
+      padding: 10px 24px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .play-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+    }
+
+    .game-players {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text);
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #00ff88;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Features Section */
+    .features-section {
+      padding: 100px 50px;
+      background: rgba(26, 31, 46, 0.3);
+      position: relative;
+      z-index: 2;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      text-align: center;
+      padding: 40px;
+      background: rgba(10, 14, 27, 0.6);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+    }
+
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .feature-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .feature-description {
+      color: var(--text);
+      opacity: 0.7;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      padding: 50px;
+      background: var(--darker);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+      z-index: 2;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+
+    .footer-section h4 {
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      color: var(--text);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: all 0.3s;
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+      color: var(--primary);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: var(--text);
+      opacity: 0.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        padding: 15px 20px;
+      }
+
+      .nav-links {
+        gap: 20px;
+      }
+
+      .hero {
+        padding: 100px 20px 50px;
+      }
+
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .games-section, .features-section {
+        padding: 50px 20px;
+      }
+
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Glow effect */
+    .glow {
+      position: relative;
+    }
+
+    .glow::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+      border-radius: inherit;
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.3s;
+      filter: blur(10px);
+    }
+
+    .glow:hover::after {
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+<div class="bg-animation"></div>
+
+<nav>
+  <div class="nav-container">
+    <div class="logo">POSEIDON</div>
+    <div class="nav-links">
+      <a href="#games" class="nav-link">Jocuri</a>
+      <a href="#features" class="nav-link">Caracteristici</a>
+      <a href="#about" class="nav-link">Despre</a>
+      <a href="/login" class="btn btn-secondary">Autentificare</a>
+      <a href="/register" class="btn btn-primary glow">Începe Acum</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title">Noua Eră a Cazinourilor Online</h1>
+    <p class="hero-subtitle">Experimentează viitorul jocurilor de noroc cu tehnologie blockchain și premii instant</p>
+    <div class="hero-buttons">
+      <a href="/register" class="btn btn-primary glow" style="font-size: 1.1rem; padding: 15px 40px;">
+        Joacă Gratuit
+      </a>
+      <a href="#games" class="btn btn-secondary" style="font-size: 1.1rem; padding: 15px 40px;">
+        Explorează Jocurile
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-number">2.5M+</div>
+        <div class="stat-label">Jucători Activi</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">€50M+</div>
+        <div class="stat-label">Premii Plătite</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">99.9%</div>
+        <div class="stat-label">Uptime Server</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="games" class="games-section">
+  <div class="section-header">
+    <h2 class="section-title">Jocuri Premium</h2>
+    <p class="section-subtitle">Alege din colecția noastră de jocuri exclusive cu RTP ridicat</p>
+  </div>
+
+  <div class="filter-container">
+    <button class="filter-pill active" onclick="filterGames('all')">Toate</button>
+    <button class="filter-pill" onclick="filterGames('dice')">Zaruri</button>
+    <button class="filter-pill" onclick="filterGames('crash')">Crash</button>
+    <button class="filter-pill" onclick="filterGames('slots')">Sloturi</button>
+    <button class="filter-pill" onclick="filterGames('table')">Masă</button>
+    <button class="filter-pill" onclick="filterGames('live')">Live</button>
+  </div>
+
+  <div class="games-grid">
+    <div class="game-card" data-category="dice">
+      <div class="game-image">
+        <div class="game-icon">🎲</div>
+      </div>
+      <div class="game-content">
+        <span class="game-tag">HOT</span>
+        <h3 class="game-title">Zarurile lui Poseidon</h3>
+        <p class="game-description">Prezice suma zarurilor divine și câștigă până la 10x miza ta!</p>
+        <div class="game-footer">
+          <button class="play-btn" onclick="playGame('dice')">Joacă Acum</button>
+          <div class="game-players">
+            <div class="live-dot"></div>
+            <span>2,341 online</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card" data-category="crash">
+      <div class="game-image">
+        <div class="game-icon">🚀</div>
+      </div>
+      <div class="game-content">
+        <span class="game-tag">POPULAR</span>
+        <h3 class="game-title">Rocket Crash</h3>
+        <p class="game-description">Retrage-ți câștigurile înainte ca racheta să explodeze! Multiplier infinit!</p>
+        <div class="game-footer">
+          <button class="play-btn" onclick="playGame('rocket')">Joacă Acum</button>
+          <div class="game-players">
+            <div class="live-dot"></div>
+            <span>5,892 online</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card" data-category="slots">
+      <div class="game-image">
+        <div class="game-icon">💎</div>
+      </div>
+      <div class="game-content">
+        <span class="game-tag">NOU</span>
+        <h3 class="game-title">Ocean Treasures</h3>
+        <p class="game-description">Slot 5x3 cu simboluri expandabile și bonus rounds</p>
+        <div class="game-footer">
+          <button class="play-btn" onclick="alert('În curând!')">În Curând</button>
+          <div class="game-players">
+            <span style="opacity: 0.5">În dezvoltare</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card" data-category="table">
+      <div class="game-image">
+        <div class="game-icon">♠️</div>
+      </div>
+      <div class="game-content">
+        <span class="game-tag">CLASSIC</span>
+        <h3 class="game-title">Blackjack Elite</h3>
+        <p class="game-description">Blackjack tradițional cu side bets și insurance</p>
+        <div class="game-footer">
+          <button class="play-btn" onclick="alert('În curând!')">În Curând</button>
+          <div class="game-players">
+            <span style="opacity: 0.5">În dezvoltare</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card" data-category="live">
+      <div class="game-image">
+        <div class="game-icon">🎰</div>
+      </div>
+      <div class="game-content">
+        <span class="game-tag">LIVE</span>
+        <h3 class="game-title">Live Roulette</h3>
+        <p class="game-description">Ruletă live cu dealeri profesioniști 24/7</p>
+        <div class="game-footer">
+          <button class="play-btn" onclick="alert('În curând!')">În Curând</button>
+          <div class="game-players">
+            <span style="opacity: 0.5">În dezvoltare</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card" data-category="crash">
+      <div class="game-image">
+        <div class="game-icon">📈</div>
+      </div>
+      <div class="game-content">
+        <span class="game-tag">EXCLUSIVE</span>
+        <h3 class="game-title">Stock Market</h3>
+        <p class="game-description">Pariază pe creșterea sau scăderea graficului</p>
+        <div class="game-footer">
+          <button class="play-btn" onclick="alert('În curând!')">În Curând</button>
+          <div class="game-players">
+            <span style="opacity: 0.5">În dezvoltare</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="features-section">
+  <div class="section-header">
+    <h2 class="section-title">De ce Poseidon?</h2>
+    <p class="section-subtitle">Tehnologie de ultimă generație pentru o experiență de joc superioară</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3 class="feature-title">Tranzacții Instant</h3>
+      <p class="feature-description">Depuneri și retrageri procesate în mai puțin de 30 de secunde</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔐</div>
+      <h3 class="feature-title">Securitate Maximă</h3>
+      <p class="feature-description">Criptare SSL și autentificare în doi pași pentru protecția contului</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎁</div>
+      <h3 class="feature-title">Bonusuri Zilnice</h3>
+      <p class="feature-description">Recompense pentru fiecare zi de activitate și turnee exclusive</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💸</div>
+      <h3 class="feature-title">RTP Transparent</h3>
+      <p class="feature-description">Toate jocurile au RTP verificabil pe blockchain</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <h3 class="feature-title">Multi-Currency</h3>
+      <p class="feature-description">Suport pentru EUR, USD și principalele criptomonede</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <h3 class="feature-title">Suport 24/7</h3>
+      <p class="feature-description">Echipă dedicată disponibilă non-stop pentru asistență</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-section">
+      <h4>Jocuri</h4>
+      <ul class="footer-links">
+        <li><a href="#dice">Zaruri</a></li>
+        <li><a href="#crash">Crash Games</a></li>
+        <li><a href="#slots">Sloturi</a></li>
+        <li><a href="#live">Live Casino</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Companie</h4>
+      <ul class="footer-links">
+        <li><a href="#about">Despre Noi</a></li>
+        <li><a href="#terms">Termeni și Condiții</a></li>
+        <li><a href="#privacy">Politica de Confidențialitate</a></li>
+        <li><a href="#responsible">Joc Responsabil</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Suport</h4>
+      <ul class="footer-links">
+        <li><a href="#help">Centru de Ajutor</a></li>
+        <li><a href="#faq">Întrebări Frecvente</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#affiliate">Program Afiliere</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Urmărește-ne</h4>
+      <ul class="footer-links">
+        <li><a href="#">Twitter</a></li>
+        <li><a href="#">Discord</a></li>
+        <li><a href="#">Telegram</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Poseidon Casino. Toate drepturile rezervate. | 18+ Joacă Responsabil</p>
+  </div>
+</footer>
+
+<script>
+  // Check for existing token
+  const token = localStorage.getItem('token');
+  if (token) {
+    fetch('/api/balance', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then(response => {
+      if (response.ok) {
+        window.location.href = '/dashboard';
+      }
+    });
+  }
+
+  // Smooth scrolling
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+
+  // Filter games
+  function filterGames(category) {
+    const pills = document.querySelectorAll('.filter-pill');
+    const games = document.querySelectorAll('.game-card');
+
+    pills.forEach(pill => {
+      pill.classList.remove('active');
+      if (pill.textContent.toLowerCase().includes(category) ||
+              (category === 'all' && pill.textContent === 'Toate')) {
+        pill.classList.add('active');
+      }
+    });
+
+    games.forEach(game => {
+      if (category === 'all' || game.dataset.category === category) {
+        game.style.display = 'block';
+        game.style.animation = 'fadeIn 0.5s ease-out';
+      } else {
+        game.style.display = 'none';
+      }
+    });
+  }
+
+  // Play game
+  function playGame(gameType) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Trebuie să te autentifici pentru a juca!');
+      window.location.href = '/login';
+      return;
+    }
+    window.location.href = '/dashboard';
+  }
+
+  // Parallax effect on scroll
+  let ticking = false;
+  function updateParallax() {
+    const scrolled = window.pageYOffset;
+    const parallax = document.querySelector('.bg-animation');
+    if (parallax) {
+      parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+    }
+    ticking = false;
+  }
+
+  function requestTick() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateParallax);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', requestTick);
+
+  // Add fade in animation
+  const style = document.createElement('style');
+  style.textContent = `
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+  document.head.appendChild(style);
+
+  // Intersection Observer for animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.animation = 'fadeIn 0.8s ease-out forwards';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.game-card, .feature-card, .stat').forEach(el => {
+    el.style.opacity = '0';
+    observer.observe(el);
+  });
+
+  // Dynamic background particles
+  function createParticle() {
+    const particle = document.createElement('div');
+    particle.style.cssText = `
+                position: fixed;
+                pointer-events: none;
+                width: 4px;
+                height: 4px;
+                background: var(--primary);
+                border-radius: 50%;
+                opacity: 0;
+                animation: particleFloat 4s ease-out;
+            `;
+
+    particle.style.left = Math.random() * window.innerWidth + 'px';
+    particle.style.top = Math.random() * window.innerHeight + 'px';
+
+    document.body.appendChild(particle);
+
+    setTimeout(() => particle.remove(), 4000);
+  }
+
+  // Add particle animation
+  const particleStyle = document.createElement('style');
+  particleStyle.textContent = `
+            @keyframes particleFloat {
+                0% {
+                    opacity: 0;
+                    transform: translateY(0) scale(0);
+                }
+                10% {
+                    opacity: 1;
+                    transform: translateY(-10px) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-100px) scale(0.5);
+                }
+            }
+        `;
+  document.head.appendChild(particleStyle);
+
+  // Create particles on mouse move
+  let particleTimer;
+  document.addEventListener('mousemove', (e) => {
+    clearTimeout(particleTimer);
+    particleTimer = setTimeout(() => {
+      const particle = document.createElement('div');
+      particle.style.cssText = `
+                    position: fixed;
+                    pointer-events: none;
+                    width: 4px;
+                    height: 4px;
+                    background: var(--primary);
+                    border-radius: 50%;
+                    opacity: 0;
+                    animation: particleFloat 2s ease-out;
+                    left: ${e.clientX}px;
+                    top: ${e.clientY}px;
+                `;
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 2000);
+    }, 50);
+  });
+
+  // Update live player counts
+  function updatePlayerCounts() {
+    document.querySelectorAll('.game-players span').forEach(span => {
+      if (span.textContent.includes('online')) {
+        const currentCount = parseInt(span.textContent.replace(/[^0-9]/g, ''));
+        const variation = Math.floor(Math.random() * 200) - 100;
+        const newCount = Math.max(100, currentCount + variation);
+        span.textContent = `${newCount.toLocaleString()} online`;
+      }
+    });
+  }
+
+  setInterval(updatePlayerCounts, 5000);
+
+  // Mobile menu toggle
+  const mobileMenuBtn = document.createElement('button');
+  mobileMenuBtn.innerHTML = '☰';
+  mobileMenuBtn.style.cssText = `
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        `;
+
+  // Add mobile responsiveness
+  const mobileStyle = document.createElement('style');
+  mobileStyle.textContent = `
+            @media (max-width: 768px) {
+                .nav-links {
+                    position: fixed;
+                    top: 70px;
+                    left: 0;
+                    right: 0;
+                    background: var(--darker);
+                    flex-direction: column;
+                    padding: 20px;
+                    transform: translateX(-100%);
+                    transition: transform 0.3s;
+                    z-index: 999;
+                }
+
+                .nav-links.active {
+                    transform: translateX(0);
+                }
+
+                .mobile-menu-btn {
+                    display: block !important;
+                }
+            }
+        `;
+  document.head.appendChild(mobileStyle);
+
+  mobileMenuBtn.classList.add('mobile-menu-btn');
+  mobileMenuBtn.addEventListener('click', () => {
+    document.querySelector('.nav-links').classList.toggle('active');
+  });
+
+  document.querySelector('.nav-container').appendChild(mobileMenuBtn);
+</script>
+</body>
+</html>
