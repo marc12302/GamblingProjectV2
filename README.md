@@ -107,8 +107,8 @@ brew install gcc cmake sqlite openssl
 
 ### Clone Repository
 ```bash
-git clone https://github.com/yourusername/poseidon-casino.git
-cd poseidon-casino
+git clone https://github.com/marc12302/Poseidon-Casino.git
+cd Poseidon-Casino
 ```
 
 ### Build Backend
