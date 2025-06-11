@@ -270,6 +270,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <div align="center">
-  <p>Made with ❤️ and ☕ by Marc</p>
+  <p>Made with ❤️ and ☕ by Lenny</p>
   <p>⭐ Star this repository if you find it helpful!</p>
 </div>
