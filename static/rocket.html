@@ -430,6 +430,22 @@
       color: var(--primary);
     }
 
+    .live-bets-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .active-players {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--text);
+      opacity: 0.8;
+    }
+
     .live-bet-item {
       display: flex;
       justify-content: space-between;
@@ -448,6 +464,34 @@
     .live-bet-amount {
       color: var(--primary);
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .live-bet-amount.cashed {
+      color: var(--success);
+    }
+
+    .live-bet-amount.waiting {
+      color: var(--text);
+    }
+
+    .live-bet-amount small {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      font-weight: 400;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     /* Animations */
@@ -582,7 +626,13 @@
 </div>
 
 <div class="live-bets">
-  <h4 class="live-bets-title">Pariuri Live</h4>
+  <div class="live-bets-header">
+    <h4 class="live-bets-title">Pariuri Live</h4>
+    <div class="active-players">
+      <div class="live-dot"></div>
+      <span id="activePlayersCount">0</span> jucători
+    </div>
+  </div>
   <div id="liveBetsList">
     <!-- Live bets will be simulated here -->
   </div>
@@ -878,7 +928,44 @@
 
   // Simulate live bets
   function simulateLiveBets() {
-    const names = ['Alex', 'Maria', 'Ion', 'Elena', 'Andrei', 'Ana', 'Mihai', 'Ioana'];
+    // Lista mai mare de nume realiste românești și internaționale
+    const firstNames = [
+      'Alexandru', 'Maria', 'Ion', 'Elena', 'Andrei', 'Ana', 'Mihai', 'Ioana',
+      'Gabriel', 'Cristina', 'Daniel', 'Laura', 'Marius', 'Andreea', 'Vlad',
+      'Diana', 'Bogdan', 'Raluca', 'Stefan', 'Monica', 'Radu', 'Alina',
+      'Cosmin', 'Simona', 'Florin', 'Roxana', 'Adrian', 'Bianca', 'George',
+      'Catalin', 'Oana', 'Lucian', 'Mihaela', 'Razvan', 'Adriana', 'Ciprian',
+      'John', 'Sarah', 'Mike', 'Emma', 'David', 'Lisa', 'James', 'Anna',
+      'Robert', 'Mary', 'William', 'Jennifer', 'Richard', 'Linda', 'Thomas'
+    ];
+
+    const lastInitials = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'V'];
+
+    // Generează nume unice pentru sesiune
+    const generateUsername = () => {
+      const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+      const lastInitial = lastInitials[Math.floor(Math.random() * lastInitials.length)];
+      const number = Math.floor(Math.random() * 99) + 1;
+      return `${firstName}${lastInitial}${number}`;
+    };
+
+    // Cache pentru utilizatori activi (pentru a părea mai realist)
+    const activeUsers = [];
+    for (let i = 0; i < 20; i++) {
+      activeUsers.push(generateUsername());
+    }
+
+    // Actualizare număr jucători activi
+    const updateActivePlayersCount = () => {
+      const baseCount = 234 + Math.floor(Math.random() * 100);
+      const timeModifier = new Date().getHours() > 20 ? 1.5 : 1;
+      const count = Math.floor(baseCount * timeModifier);
+      document.getElementById('activePlayersCount').textContent = count;
+    };
+
+    updateActivePlayersCount();
+    setInterval(updateActivePlayersCount, 5000);
+
     const liveBetsList = document.getElementById('liveBetsList');
 
     const interval = setInterval(() => {
@@ -887,29 +974,71 @@
         return;
       }
 
-      if (Math.random() > 0.7) {
-        const name = names[Math.floor(Math.random() * names.length)];
-        const amount = Math.floor(Math.random() * 500) + 10;
-        const multiplier = (1 + Math.random() * 5).toFixed(2);
+      // Șansă mai mare de pariuri în primele secunde
+      const chance = currentMultiplier < 2 ? 0.6 : 0.4;
+
+      if (Math.random() > chance) {
+        // Alege un utilizator activ sau generează unul nou
+        const useExisting = Math.random() > 0.3 && activeUsers.length > 0;
+        const username = useExisting ?
+                activeUsers[Math.floor(Math.random() * activeUsers.length)] :
+                generateUsername();
+
+        if (!useExisting) {
+          activeUsers.push(username);
+          if (activeUsers.length > 30) {
+            activeUsers.shift();
+          }
+        }
+
+        // Sume mai realiste bazate pe distribuție
+        const betAmounts = [10, 20, 25, 50, 100, 150, 200, 250, 500, 1000];
+        const weights = [30, 25, 20, 15, 10, 8, 5, 3, 2, 1];
+
+        let totalWeight = weights.reduce((a, b) => a + b, 0);
+        let random = Math.random() * totalWeight;
+        let amount = 10;
+
+        for (let i = 0; i < betAmounts.length; i++) {
+          random -= weights[i];
+          if (random <= 0) {
+            amount = betAmounts[i];
+            break;
+          }
+        }
+
+        // Multiplier mai realist
+        const multiplier = (1.01 + Math.random() * (currentMultiplier - 1) + Math.random() * 2).toFixed(2);
 
         const liveBet = document.createElement('div');
         liveBet.className = 'live-bet-item';
+        liveBet.style.animation = 'slideIn 0.3s ease-out';
+
+        // Determină dacă a câștigat sau încă așteaptă
+        const cashed = parseFloat(multiplier) < currentMultiplier;
+        const profit = cashed ? (amount * (multiplier - 1)).toFixed(2) : null;
+
         liveBet.innerHTML = `
-                        <span class="live-bet-user">${name}</span>
-                        <span class="live-bet-amount">€${amount} @ ${multiplier}x</span>
+                        <span class="live-bet-user">${username}</span>
+                        <span class="live-bet-amount ${cashed ? 'cashed' : 'waiting'}">
+                            ${cashed ? `+€${profit}` : `€${amount}`}
+                            <small>${cashed ? `@${multiplier}x` : 'în joc'}</small>
+                        </span>
                     `;
 
         liveBetsList.insertBefore(liveBet, liveBetsList.firstChild);
 
-        if (liveBetsList.children.length > 10) {
+        // Elimină pariurile vechi
+        if (liveBetsList.children.length > 15) {
           liveBetsList.removeChild(liveBetsList.lastChild);
         }
 
+        // Animație de fade pentru pariurile mai vechi
         setTimeout(() => {
-          liveBet.style.opacity = '0.5';
-        }, 3000);
+          liveBet.style.opacity = '0.7';
+        }, 5000);
       }
-    }, 1000);
+    }, Math.random() * 1500 + 500); // Interval variabil pentru realism
   }
 
   // Initialize

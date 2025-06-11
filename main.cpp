@@ -13,9 +13,16 @@ using namespace std;
 class CasinoBackend {
 private:
     sqlite3* db;
-    string jwt_secret = "poseidon_secret_key_2025";
+    string jwt_secret = "poseidon_secret_key_2024";
     mt19937 rng;
     mutex db_mutex;
+
+    // Helper pentru a adăuga CORS headers la response
+    void addCorsHeaders(crow::response& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    }
 
     // Sistem supervisor pentru profit
     struct SupervisorSystem {
@@ -125,8 +132,7 @@ public:
         }
     }
 
-    template <typename App>
-    void setupRoutes(App& app) {
+    void setupRoutes(crow::SimpleApp& app) {
         // Servește fișierele statice
         app.route_dynamic("/")([](const crow::request& req, crow::response& res) {
             ifstream file("static/index.html");
@@ -151,19 +157,16 @@ public:
             stringstream buffer;
             buffer << file.rdbuf();
             res.set_header("Content-Type", "text/html");
+            res.set_header("Cache-Control", "no-cache, no-store, must-revalidate");
+            res.set_header("Pragma", "no-cache");
+            res.set_header("Expires", "0");
             res.write(buffer.str());
             res.end();
         });
 
         app.route_dynamic("/dashboard")([this](const crow::request& req, crow::response& res) {
-            auto auth = req.get_header_value("Authorization");
-            if (auth.empty() || !verifyJWT(auth.substr(7))) { // Remove "Bearer "
-                res.code = 401;
-                res.write("Unauthorized");
-                res.end();
-                return;
-            }
-
+            // Pentru dashboard, doar servim fișierul HTML
+            // Verificarea token-ului se face în frontend prin JavaScript
             ifstream file("static/dashboard.html");
             stringstream buffer;
             buffer << file.rdbuf();
@@ -172,14 +175,8 @@ public:
             res.end();
         });
 
-        app.route_dynamic("/games/dice")([this](const crow::request& req, crow::response& res) {
-            auto auth = req.get_header_value("Authorization");
-            if (auth.empty() || !verifyJWT(auth.substr(7))) {
-                res.redirect("/login");
-                res.end();
-                return;
-            }
-
+        app.route_dynamic("/games/dice")([](const crow::request& req, crow::response& res) {
+            // Servim direct fișierul HTML
             ifstream file("static/dice.html");
             stringstream buffer;
             buffer << file.rdbuf();
@@ -188,14 +185,8 @@ public:
             res.end();
         });
 
-        app.route_dynamic("/games/rocket")([this](const crow::request& req, crow::response& res) {
-            auto auth = req.get_header_value("Authorization");
-            if (auth.empty() || !verifyJWT(auth.substr(7))) {
-                res.redirect("/login");
-                res.end();
-                return;
-            }
-
+        app.route_dynamic("/games/rocket")([](const crow::request& req, crow::response& res) {
+            // Servim direct fișierul HTML
             ifstream file("static/rocket.html");
             stringstream buffer;
             buffer << file.rdbuf();
@@ -207,7 +198,11 @@ public:
         // API Routes
         app.route_dynamic("/api/register").methods("POST"_method)([this](const crow::request& req) {
             auto x = crow::json::load(req.body);
-            if (!x) return crow::response(400, "Invalid JSON");
+            if (!x) {
+                crow::response res(400, "Invalid JSON");
+                res.set_header("Access-Control-Allow-Origin", "*");
+                return res;
+            }
 
             string username = x["username"].s();
             string password = x["password"].s(); // În producție, hash-uiește parola!
@@ -221,7 +216,10 @@ public:
 
             if (sqlite3_step(stmt) == SQLITE_ROW) {
                 sqlite3_finalize(stmt);
-                return crow::response(409, R"({"error": "Username already exists"})");
+                crow::response res(409, R"({"error": "Username already exists"})");
+                res.set_header("Access-Control-Allow-Origin", "*");
+                res.set_header("Content-Type", "application/json");
+                return res;
             }
             sqlite3_finalize(stmt);
 
@@ -247,12 +245,19 @@ public:
             response["username"] = username;
             response["balance"] = 1000.0;
 
-            return crow::response(200, response);
+            crow::response res(200, response);
+            res.set_header("Access-Control-Allow-Origin", "*");
+            res.set_header("Content-Type", "application/json");
+            return res;
         });
 
         app.route_dynamic("/api/login").methods("POST"_method)([this](const crow::request& req) {
             auto x = crow::json::load(req.body);
-            if (!x) return crow::response(400, "Invalid JSON");
+            if (!x) {
+                crow::response res(400, "Invalid JSON");
+                res.set_header("Access-Control-Allow-Origin", "*");
+                return res;
+            }
 
             string username = x["username"].s();
             string password = x["password"].s();
@@ -283,21 +288,35 @@ public:
                     response["username"] = username;
                     response["balance"] = balance;
 
-                    return crow::response(200, response);
+                    crow::response res(200, response);
+                    res.set_header("Access-Control-Allow-Origin", "*");
+                    res.set_header("Content-Type", "application/json");
+                    return res;
                 }
             } else {
                 sqlite3_finalize(stmt);
             }
 
-            return crow::response(401, R"({"error": "Invalid credentials"})");
+            crow::response res(401, R"({"error": "Invalid credentials"})");
+            res.set_header("Access-Control-Allow-Origin", "*");
+            res.set_header("Content-Type", "application/json");
+            return res;
         });
 
         app.route_dynamic("/api/balance").methods("GET"_method)([this](const crow::request& req) {
             auto auth = req.get_header_value("Authorization");
-            if (auth.empty()) return crow::response(401, "No token provided");
+            if (auth.empty()) {
+                crow::response res(401, "No token provided");
+                res.set_header("Access-Control-Allow-Origin", "*");
+                return res;
+            }
 
             string token = auth.substr(7); // Remove "Bearer "
-            if (!verifyJWT(token)) return crow::response(401, "Invalid token");
+            if (!verifyJWT(token)) {
+                crow::response res(401, "Invalid token");
+                res.set_header("Access-Control-Allow-Origin", "*");
+                return res;
+            }
 
             int user_id = getUserIdFromToken(token);
 
@@ -312,11 +331,17 @@ public:
 
                 crow::json::wvalue response;
                 response["balance"] = balance;
-                return crow::response(200, response);
+
+                crow::response res(200, response);
+                res.set_header("Access-Control-Allow-Origin", "*");
+                res.set_header("Content-Type", "application/json");
+                return res;
             }
 
             sqlite3_finalize(stmt);
-            return crow::response(404, "Balance not found");
+            crow::response res(404, "Balance not found");
+            res.set_header("Access-Control-Allow-Origin", "*");
+            return res;
         });
 
         app.route_dynamic("/api/add-funds").methods("POST"_method)([this](const crow::request& req) {
@@ -635,16 +660,18 @@ public:
 };
 
 int main() {
-    using MyApp = crow::App<crow::CORSHandler>;
-    MyApp app;
+    crow::SimpleApp app;
     CasinoBackend backend;
 
-    // Configurare CORS
-    auto& cors = app.get_middleware<crow::CORSHandler>();
-    cors.global()
-        .headers("*")
-        .methods("POST"_method, "GET"_method, "PUT"_method, "DELETE"_method)
-        .origin("*");
+    // Configurare CORS - IMPORTANT: trebuie înainte de setupRoutes
+    app.route_dynamic("/api/<path>").methods("OPTIONS"_method)([](const crow::request& req, string path_param) {
+        crow::response res;
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.code = 204;
+        return res;
+    });
 
     backend.setupRoutes(app);
 
