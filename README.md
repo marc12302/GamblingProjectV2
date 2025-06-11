@@ -1,3 +1,4 @@
+![madafaca](https://github.com/user-attachments/assets/7ea5b267-63c8-42e4-a5d5-79a3e2129a9b)
 # 🌊 Poseidon Casino - Modern Online Gaming Platform
 
 <div align="center">
