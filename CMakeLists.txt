@@ -38,8 +38,21 @@ add_custom_command(TARGET server POST_BUILD
         ${CMAKE_BINARY_DIR}/static
 )
 
-find_package(OpenSSL REQUIRED)
+if(APPLE)
+    find_package(OpenSSL REQUIRED)
+    target_include_directories(server PRIVATE ${OPENSSL_INCLUDE_DIR})
+    target_link_libraries(server PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+elseif(WIN32)
+    set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL-Win64")
+    set(OPENSSL_INCLUDE_DIR "${OPENSSL_ROOT_DIR}/include")
+    set(OPENSSL_CRYPTO_LIBRARY "${OPENSSL_ROOT_DIR}/lib/VC/x64/MD/libcrypto.lib")
+    set(OPENSSL_SSL_LIBRARY "${OPENSSL_ROOT_DIR}/lib/VC/x64/MD/libssl.lib")
 
-target_include_directories(server PRIVATE ${OPENSSL_INCLUDE_DIR})
-target_link_libraries(server PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+    target_include_directories(server PRIVATE ${OPENSSL_INCLUDE_DIR})
+    target_link_libraries(server PRIVATE ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
+endif()
+
+
+
+
 
