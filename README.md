@@ -97,7 +97,7 @@ Poseidon Casino is a cutting-edge online gambling platform that combines the raw
 
 ### Windows
 - Download this => *[OpenSSL](https://slproweb.com/download/Win64OpenSSL-3_5_0.exe)*
-- **Install OpenSSL with defalut settings and make sure it's installed in ProgramFiles (C:)**
+- **Install OpenSSL with defalut settings and make sure it's installed in Program Files (C:)**
   
 ### Prerequisites
 ```bash
